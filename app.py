@@ -9,8 +9,9 @@ app = Flask(__name__)
 # create first route
 @app.route('/')
 def hello_world():
-    return hello_world
+    return 'hello world'
 
-set FLASK_APP = app.py
-flask run
+# run these in gitbash
+# set FLASK_APP = app.py
+# flask run
 
