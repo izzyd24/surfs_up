@@ -29,7 +29,7 @@ session = Session(engine)
 app = Flask(__name__)
 
 # create welcome route 9.5.2
-@app.route("/")
+@app.route("/api/v1.0/welcome")
 def welcome():
     # use /api/v1.0/ as naming convention followed by name of our wanted route
     return(
@@ -52,11 +52,40 @@ def precipitation():
     filter(Measurement.date >= prev_year).all()
     # create a dictionary with the date as the key and the precipitation as the value 
     precip = {date: prcp for date, prcp in precipitation}
+    # use jsonify function to fomrat in JSON structured file
+    # it will help us go through the data easily
     return jsonify(precip)
 
 # create third route; stations 9.5.4
+@app.route("/api/v1.0/stations")
+def stations():
+    # unravel results in 1 dimensional array
+    results = session.query(Station.station).all()
+    # once unraveled make into list...
+    # convert our array into list
+    stations = list(np.ravel(results))
+    # once again return in JSON format
+    return jsonify(stations=stations)
+
+# create the fourth route; monthly temp. 9.5.6
+@app.route("/api/v1.0/tobs")
+def temp_monthly():
+    # calculate the date one year ago from last date in database
+    prev_year = dt.date(2017, 8, 23) -dt.timedelta(days=365)
+
+    # query primary station for all temp observations in prev year
+    results = session.query(Measurement.tobs).\
+        filter(Measurement.station == 'USC00519281').\
+        filter(Measurement.date >= prev_year).all()
+
+    # unravel results into 1D array, then make into list
+    # then last return as JSON format
+    temps = list(np.ravel(results))
+    return jsonify(temps=temps)
+
+# create fifth route; stats 9.5.6
+
 
 # run this in gitbash
 # set FLASK_APP = app.py
 # flask run
-
