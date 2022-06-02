@@ -84,6 +84,27 @@ def temp_monthly():
     return jsonify(temps=temps)
 
 # create fifth route; stats 9.5.6
+@app.route("/api/v1.0/temp/<start>")
+@app.route("/api/v1.0/temp/<start>/<end>")
+# add param of start and end
+def descrip_stats(start=None, end=None):
+    # create query to select min, max, average temps
+    specstats = [func.min(Measurement.tobs). 
+    func.average(Measurement.tobs), func.max(Measurement.tobs)]
+
+    # use if not to find start and end date
+    if not end: 
+        results = session.query(*specstats).\
+            filter(Measurement.date >= start).all()
+        # after if/not, unravel 1d array into list
+        temps = list(np.ravel(results))
+        return jsonify(temps=temps)
+    # now calc min, avg, max for start and end dates 
+    results = session.query(*specstats).\
+        filter(Measurement.date >= start).\
+        filter(Measurement.date <= end).all()
+    temps = list(np.ravel(results))
+    return jsonify(temps)
 
 
 # run this in gitbash
