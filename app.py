@@ -45,14 +45,16 @@ def welcome():
 # create second route; precipitation 9.5.3
 @app.route("/api/v1.0/precipitation")
 def precipitation():
+    # calculates the date one year ago from the most recent date in the database
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
+    # get the date and precipitation for the previous year
     precipitation = session.query(Measurement.date, Measurement.prcp).\
     filter(Measurement.date >= prev_year).all()
+    # create a dictionary with the date as the key and the precipitation as the value 
     precip = {date: prcp for date, prcp in precipitation}
     return jsonify(precip)
 
-
-
+# create third route; stations 9.5.4
 
 # run this in gitbash
 # set FLASK_APP = app.py
